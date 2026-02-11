@@ -44,13 +44,15 @@ async def get_litellm_models() -> list[str]:
 
         verified_model_store = VerifiedModelStore.get_instance()
     except ImportError:
-        # Not in SaaS mode, use hardcoded models
+        # Expected in self-hosted mode - enterprise modules not available
         pass
-    except Exception as e:
-        # Log error but continue with hardcoded models
+    except Exception:
+        # Unexpected error - log full traceback for debugging
         from openhands.core.logger import openhands_logger as logger
 
-        logger.warning(f'Error initializing verified model store: {e}')
+        logger.exception(
+            'Failed to initialize verified model store - falling back to hardcoded models'
+        )
 
     return get_supported_llm_models(config, verified_model_store)
 

@@ -5,7 +5,7 @@ in the OpenHands Cloud model selector, allowing dynamic updates
 without requiring code deployments.
 """
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, text
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, UniqueConstraint, func, text
 from storage.base import Base
 
 
@@ -14,7 +14,7 @@ class VerifiedModel(Base):
 
     Attributes:
         id: Primary key
-        model_name: The model identifier (e.g., 'claude-opus-4-5-20251101')
+        model_name: The model identifier (e.g., 'claude-3-5-sonnet-20241022')
         provider: The provider name (e.g., 'openhands', 'anthropic', 'openai')
         is_verified: Whether this model is shown in the verified section
         is_enabled: Whether this model is currently available
@@ -26,31 +26,34 @@ class VerifiedModel(Base):
         updated_at: Timestamp when the model was last updated
     """
 
-    __tablename__ = "verified_models"
+    __tablename__ = 'verified_models'
+    __table_args__ = (
+        UniqueConstraint('model_name', 'provider', name='uq_model_provider'),
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    model_name = Column(String(255), nullable=False, unique=True, index=True)
+    model_name = Column(String(255), nullable=False, index=True)
     provider = Column(String(100), nullable=False, index=True)
-    is_verified = Column(Boolean, nullable=False, default=True, server_default="true")
-    is_enabled = Column(Boolean, nullable=False, default=True, server_default="true")
+    is_verified = Column(Boolean, nullable=False, default=True, server_default=text('true'))
+    is_enabled = Column(Boolean, nullable=False, default=True, server_default=text('true'))
     supports_function_calling = Column(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean, nullable=False, default=False, server_default=text('false')
     )
     supports_vision = Column(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean, nullable=False, default=False, server_default=text('false')
     )
     supports_prompt_cache = Column(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean, nullable=False, default=False, server_default=text('false')
     )
     supports_reasoning_effort = Column(
-        Boolean, nullable=False, default=False, server_default="false"
+        Boolean, nullable=False, default=False, server_default=text('false')
     )
     created_at = Column(
-        DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False
+        DateTime, server_default=func.now(), nullable=False
     )
     updated_at = Column(
         DateTime,
-        server_default=text("CURRENT_TIMESTAMP"),
-        onupdate=text("CURRENT_TIMESTAMP"),
+        server_default=func.now(),
+        onupdate=func.now(),
         nullable=False,
     )

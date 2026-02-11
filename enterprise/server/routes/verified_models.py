@@ -101,11 +101,11 @@ def _validate_model_input(model_name: str, provider: str) -> None:
     Raises:
         HTTPException: If validation fails
     """
-    # Validate model_name
-    if not re.match(r'^[a-zA-Z0-9_.-]+$', model_name):
+    # Validate model_name - must start and end with alphanumeric, special chars only in middle
+    if not re.match(r'^[a-zA-Z0-9]([a-zA-Z0-9_.-]*[a-zA-Z0-9])?$', model_name):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='model_name must contain only alphanumeric characters, hyphens, underscores, and dots',
+            detail='model_name must start and end with alphanumeric characters, with hyphens, underscores, and dots allowed in the middle',
         )
     if len(model_name) > 255:
         raise HTTPException(
@@ -113,11 +113,11 @@ def _validate_model_input(model_name: str, provider: str) -> None:
             detail='model_name exceeds maximum length of 255 characters',
         )
 
-    # Validate provider
-    if not re.match(r'^[a-zA-Z0-9_-]+$', provider):
+    # Validate provider - must start and end with alphanumeric
+    if not re.match(r'^[a-zA-Z0-9]([a-zA-Z0-9_-]*[a-zA-Z0-9])?$', provider):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail='provider must contain only alphanumeric characters, hyphens, and underscores',
+            detail='provider must start and end with alphanumeric characters, with hyphens and underscores allowed in the middle',
         )
     if len(provider) > 100:
         raise HTTPException(
@@ -141,13 +141,25 @@ async def list_verified_models(
         provider: Optional provider filter
         enabled_only: If True, only return enabled models
         verified_only: If True, only return verified models
-        limit: Maximum number of models to return (default: 100)
+        limit: Maximum number of models to return (default: 100, max: 1000)
         offset: Number of models to skip (default: 0)
         user_id: Authenticated admin user ID (from dependency)
 
     Returns:
         list[VerifiedModelResponse]: List of verified models
     """
+    # Validate pagination parameters
+    if limit < 1 or limit > 1000:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='limit must be between 1 and 1000',
+        )
+    if offset < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='offset must be non-negative',
+        )
+
     try:
         if provider:
             models = verified_model_store.get_models_by_provider(provider)

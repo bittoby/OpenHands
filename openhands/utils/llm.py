@@ -1,5 +1,4 @@
 import warnings
-from typing import TYPE_CHECKING
 
 import httpx
 
@@ -12,8 +11,11 @@ from openhands.core.config import LLMConfig, OpenHandsConfig
 from openhands.core.logger import openhands_logger as logger
 from openhands.llm import bedrock
 
-if TYPE_CHECKING:
+# Try to import VerifiedModelStore - only available in enterprise/SaaS deployments
+try:
     from enterprise.storage.verified_model_store import VerifiedModelStore
+except ImportError:
+    VerifiedModelStore = None  # type: ignore
 
 
 def is_openhands_model(model: str | None) -> bool:
@@ -72,7 +74,7 @@ def get_provider_api_base(model: str) -> str | None:
 
 
 def get_supported_llm_models(
-    config: OpenHandsConfig, verified_model_store: 'VerifiedModelStore | None' = None
+    config: OpenHandsConfig, verified_model_store=None
 ) -> list[str]:
     """Get all models supported by LiteLLM.
 
@@ -138,25 +140,6 @@ def get_supported_llm_models(
                     f'Using {len(db_model_names)} verified models from database'
                 )
                 model_list = db_model_names + model_list
-                # Add Clarifai models and return early
-                clarifai_models = [
-                    # clarifai featured models
-                    'clarifai/openai.chat-completion.gpt-oss-120b',
-                    'clarifai/openai.chat-completion.gpt-oss-20b',
-                    'clarifai/openai.chat-completion.gpt-5',
-                    'clarifai/openai.chat-completion.gpt-5-mini',
-                    'clarifai/qwen.qwen3.qwen3-next-80B-A3B-Thinking',
-                    'clarifai/qwen.qwenLM.Qwen3-30B-A3B-Instruct-2507',
-                    'clarifai/qwen.qwenLM.Qwen3-30B-A3B-Thinking-2507',
-                    'clarifai/qwen.qwenLM.Qwen3-14B',
-                    'clarifai/qwen.qwenCoder.Qwen3-Coder-30B-A3B-Instruct',
-                    'clarifai/deepseek-ai.deepseek-chat.DeepSeek-R1-0528-Qwen3-8B',
-                    'clarifai/deepseek-ai.deepseek-chat.DeepSeek-V3_1',
-                    'clarifai/zai.completion.GLM_4_5',
-                    'clarifai/moonshotai.kimi.Kimi-K2-Instruct',
-                ]
-                model_list = clarifai_models + model_list
-                return sorted(set(model_list))
         except Exception as e:
             logger.warning(
                 f'Error fetching verified models from database, falling back to hardcoded: {e}'
@@ -182,7 +165,19 @@ def get_supported_llm_models(
     model_list = openhands_models + model_list
 
     # Add Clarifai provider models (via OpenAI-compatible endpoint)
-    clarifai_models = [
+    # These models are available in both SaaS and self-hosted modes
+    model_list = _get_clarifai_models() + model_list
+
+    return sorted(set(model_list))
+
+
+def _get_clarifai_models() -> list[str]:
+    """Get list of Clarifai featured models.
+
+    Returns:
+        list[str]: List of Clarifai model identifiers
+    """
+    return [
         # clarifai featured models
         'clarifai/openai.chat-completion.gpt-oss-120b',
         'clarifai/openai.chat-completion.gpt-oss-20b',
@@ -198,6 +193,3 @@ def get_supported_llm_models(
         'clarifai/zai.completion.GLM_4_5',
         'clarifai/moonshotai.kimi.Kimi-K2-Instruct',
     ]
-    model_list = clarifai_models + model_list
-
-    return sorted(set(model_list))

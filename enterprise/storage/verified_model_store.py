@@ -21,11 +21,18 @@ class VerifiedModelStore:
     def get_all_models(self) -> list[VerifiedModel]:
         """Get all verified models from the database.
 
+        Note: Returns detached SQLAlchemy instances. Once the session closes,
+        the instances are detached from the session. This is intentional for
+        read-only operations, but callers should not attempt to modify and
+        save these instances.
+
         Returns:
-            list[VerifiedModel]: All models in the database
+            list[VerifiedModel]: All models in the database (detached instances)
         """
         with self.session_maker() as session:
             models = session.query(VerifiedModel).all()
+            # Explicitly detach all instances to make behavior clear
+            session.expunge_all()
             return models
 
     def get_enabled_models(self) -> list[VerifiedModel]:
@@ -232,11 +239,15 @@ class VerifiedModelStore:
     def bulk_create_models(self, models: list[dict]) -> int:
         """Bulk create multiple models.
 
+        Note: This operation is all-or-nothing. If any model fails to create
+        (e.g., constraint violation, validation error), the entire transaction
+        rolls back and returns 0. All models must be valid for any to be created.
+
         Args:
             models: List of model dictionaries with keys matching VerifiedModel fields
 
         Returns:
-            int: Number of models created
+            int: Number of models created (0 if any model fails)
         """
         with self.session_maker() as session:
             created_count = 0

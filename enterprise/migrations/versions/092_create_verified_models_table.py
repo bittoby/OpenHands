@@ -21,68 +21,62 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     # Create verified_models table
     op.create_table(
-        "verified_models",
-        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("model_name", sa.String(length=255), nullable=False),
-        sa.Column("provider", sa.String(length=100), nullable=False),
+        'verified_models',
+        sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column('model_name', sa.String(length=255), nullable=False),
+        sa.Column('provider', sa.String(length=100), nullable=False),
         sa.Column(
-            "is_verified",
+            'is_verified',
             sa.Boolean(),
             nullable=False,
-            server_default=sa.text("true"),
+            server_default=sa.text('true'),
         ),
         sa.Column(
-            "is_enabled", sa.Boolean(), nullable=False, server_default=sa.text("true")
+            'is_enabled', sa.Boolean(), nullable=False, server_default=sa.text('true')
         ),
         sa.Column(
-            "supports_function_calling",
+            'supports_function_calling',
             sa.Boolean(),
             nullable=False,
-            server_default=sa.text("false"),
+            server_default=sa.text('false'),
         ),
         sa.Column(
-            "supports_vision",
+            'supports_vision',
             sa.Boolean(),
             nullable=False,
-            server_default=sa.text("false"),
+            server_default=sa.text('false'),
         ),
         sa.Column(
-            "supports_prompt_cache",
+            'supports_prompt_cache',
             sa.Boolean(),
             nullable=False,
-            server_default=sa.text("false"),
+            server_default=sa.text('false'),
         ),
         sa.Column(
-            "supports_reasoning_effort",
+            'supports_reasoning_effort',
             sa.Boolean(),
             nullable=False,
-            server_default=sa.text("false"),
+            server_default=sa.text('false'),
         ),
         sa.Column(
-            "created_at",
+            'created_at',
             sa.DateTime(),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
+            server_default=sa.func.now(),
             nullable=False,
         ),
         sa.Column(
-            "updated_at",
+            'updated_at',
             sa.DateTime(),
-            server_default=sa.text("CURRENT_TIMESTAMP"),
+            server_default=sa.func.now(),
             nullable=False,
         ),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("model_name"),
+        sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('model_name', 'provider', name='uq_model_provider'),
     )
     op.create_index(
-        op.f("ix_verified_models_model_name"),
-        "verified_models",
-        ["model_name"],
-        unique=False,
-    )
-    op.create_index(
-        op.f("ix_verified_models_provider"),
-        "verified_models",
-        ["provider"],
+        op.f('ix_verified_models_provider'),
+        'verified_models',
+        ['provider'],
         unique=False,
     )
 
@@ -196,6 +190,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index(op.f("ix_verified_models_provider"), table_name="verified_models")
-    op.drop_index(op.f("ix_verified_models_model_name"), table_name="verified_models")
-    op.drop_table("verified_models")
+    op.drop_index(op.f('ix_verified_models_provider'), table_name='verified_models')
+    op.drop_table('verified_models')
