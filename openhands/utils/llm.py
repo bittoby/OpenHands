@@ -125,14 +125,19 @@ def get_supported_llm_models(
         try:
             db_models = verified_model_store.get_enabled_models()
             if db_models:
-                # Add openhands/ prefix to models from database
-                openhands_models = [
-                    f'openhands/{model.model_name}' for model in db_models
-                ]
+                # Use provider field from database to construct proper model identifiers
+                db_model_names = []
+                for model in db_models:
+                    # Use the provider field to construct the full model name
+                    if model.provider:
+                        db_model_names.append(f'{model.provider}/{model.model_name}')
+                    else:
+                        # Fallback to openhands if no provider specified
+                        db_model_names.append(f'openhands/{model.model_name}')
                 logger.debug(
-                    f'Using {len(openhands_models)} verified models from database'
+                    f'Using {len(db_model_names)} verified models from database'
                 )
-                model_list = openhands_models + model_list
+                model_list = db_model_names + model_list
                 # Add Clarifai models and return early
                 clarifai_models = [
                     # clarifai featured models

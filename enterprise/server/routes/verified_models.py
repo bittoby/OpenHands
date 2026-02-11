@@ -1,11 +1,13 @@
 """API routes for managing verified LLM models."""
 
+import re
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
+from server.email_validation import get_admin_user_id
 from storage.verified_model_store import VerifiedModelStore
 
 from openhands.core.logger import openhands_logger as logger
-from openhands.server.user_auth import get_user_id
 
 # Initialize API router and store
 api_router = APIRouter(prefix="/api/admin/verified-models")
@@ -65,12 +67,73 @@ class BulkCreateResponse(BaseModel):
     message: str
 
 
-@api_router.get("", response_model=list[VerifiedModelResponse])
+def _model_to_response(model) -> dict:
+    """Convert a VerifiedModel to response dict.
+
+    Args:
+        model: The VerifiedModel instance
+
+    Returns:
+        dict: Response dictionary matching VerifiedModelResponse schema
+    """
+    return {
+        'id': model.id,
+        'model_name': model.model_name,
+        'provider': model.provider,
+        'is_verified': model.is_verified,
+        'is_enabled': model.is_enabled,
+        'supports_function_calling': model.supports_function_calling,
+        'supports_vision': model.supports_vision,
+        'supports_prompt_cache': model.supports_prompt_cache,
+        'supports_reasoning_effort': model.supports_reasoning_effort,
+        'created_at': model.created_at.isoformat() if model.created_at else '',
+        'updated_at': model.updated_at.isoformat() if model.updated_at else '',
+    }
+
+
+def _validate_model_input(model_name: str, provider: str) -> None:
+    """Validate model_name and provider inputs.
+
+    Args:
+        model_name: The model name to validate
+        provider: The provider name to validate
+
+    Raises:
+        HTTPException: If validation fails
+    """
+    # Validate model_name
+    if not re.match(r'^[a-zA-Z0-9_.-]+$', model_name):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='model_name must contain only alphanumeric characters, hyphens, underscores, and dots',
+        )
+    if len(model_name) > 255:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='model_name exceeds maximum length of 255 characters',
+        )
+
+    # Validate provider
+    if not re.match(r'^[a-zA-Z0-9_-]+$', provider):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='provider must contain only alphanumeric characters, hyphens, and underscores',
+        )
+    if len(provider) > 100:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='provider exceeds maximum length of 100 characters',
+        )
+
+
+@api_router.get('', response_model=list[VerifiedModelResponse])
 async def list_verified_models(
     provider: str | None = None,
     enabled_only: bool = False,
     verified_only: bool = False,
-    user_id: str = Depends(get_user_id),
+    limit: int = 100,
+    offset: int = 0,
+    user_id: str = Depends(get_admin_user_id),
 ):
     """List all verified models.
 
@@ -78,7 +141,9 @@ async def list_verified_models(
         provider: Optional provider filter
         enabled_only: If True, only return enabled models
         verified_only: If True, only return verified models
-        user_id: Authenticated user ID (from dependency)
+        limit: Maximum number of models to return (default: 100)
+        offset: Number of models to skip (default: 0)
+        user_id: Authenticated admin user ID (from dependency)
 
     Returns:
         list[VerifiedModelResponse]: List of verified models
@@ -93,37 +158,27 @@ async def list_verified_models(
         else:
             models = verified_model_store.get_all_models()
 
-        return [
-            {
-                "id": model.id,
-                "model_name": model.model_name,
-                "provider": model.provider,
-                "is_verified": model.is_verified,
-                "is_enabled": model.is_enabled,
-                "supports_function_calling": model.supports_function_calling,
-                "supports_vision": model.supports_vision,
-                "supports_prompt_cache": model.supports_prompt_cache,
-                "supports_reasoning_effort": model.supports_reasoning_effort,
-                "created_at": model.created_at.isoformat() if model.created_at else "",
-                "updated_at": model.updated_at.isoformat() if model.updated_at else "",
-            }
-            for model in models
-        ]
+        # Apply pagination
+        paginated_models = models[offset : offset + limit]
+
+        return [_model_to_response(model) for model in paginated_models]
     except Exception:
-        logger.exception("Error listing verified models")
+        logger.exception('Error listing verified models')
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to list verified models",
+            detail='Failed to list verified models',
         )
 
 
-@api_router.get("/{model_name}", response_model=VerifiedModelResponse)
-async def get_verified_model(model_name: str, user_id: str = Depends(get_user_id)):
+@api_router.get('/{model_name}', response_model=VerifiedModelResponse)
+async def get_verified_model(
+    model_name: str, user_id: str = Depends(get_admin_user_id)
+):
     """Get a specific verified model by name.
 
     Args:
         model_name: The model name to retrieve
-        user_id: Authenticated user ID (from dependency)
+        user_id: Authenticated admin user ID (from dependency)
 
     Returns:
         VerifiedModelResponse: The verified model
@@ -133,46 +188,37 @@ async def get_verified_model(model_name: str, user_id: str = Depends(get_user_id
         if not model:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Model {model_name} not found",
+                detail=f'Model {model_name} not found',
             )
 
-        return {
-            "id": model.id,
-            "model_name": model.model_name,
-            "provider": model.provider,
-            "is_verified": model.is_verified,
-            "is_enabled": model.is_enabled,
-            "supports_function_calling": model.supports_function_calling,
-            "supports_vision": model.supports_vision,
-            "supports_prompt_cache": model.supports_prompt_cache,
-            "supports_reasoning_effort": model.supports_reasoning_effort,
-            "created_at": model.created_at.isoformat() if model.created_at else "",
-            "updated_at": model.updated_at.isoformat() if model.updated_at else "",
-        }
+        return _model_to_response(model)
     except HTTPException:
         raise
     except Exception:
-        logger.exception(f"Error getting verified model: {model_name}")
+        logger.exception(f'Error getting verified model: {model_name}')
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to get verified model",
+            detail='Failed to get verified model',
         )
 
 
-@api_router.post("", response_model=VerifiedModelResponse, status_code=201)
+@api_router.post('', response_model=VerifiedModelResponse, status_code=201)
 async def create_verified_model(
-    model_data: VerifiedModelCreate, user_id: str = Depends(get_user_id)
+    model_data: VerifiedModelCreate, user_id: str = Depends(get_admin_user_id)
 ):
     """Create a new verified model.
 
     Args:
         model_data: The model data to create
-        user_id: Authenticated user ID (from dependency)
+        user_id: Authenticated admin user ID (from dependency)
 
     Returns:
         VerifiedModelResponse: The created model
     """
     try:
+        # Validate inputs
+        _validate_model_input(model_data.model_name, model_data.provider)
+
         model = verified_model_store.create_model(
             model_name=model_data.model_name,
             provider=model_data.provider,
@@ -184,44 +230,34 @@ async def create_verified_model(
             supports_reasoning_effort=model_data.supports_reasoning_effort,
         )
 
-        return {
-            "id": model.id,
-            "model_name": model.model_name,
-            "provider": model.provider,
-            "is_verified": model.is_verified,
-            "is_enabled": model.is_enabled,
-            "supports_function_calling": model.supports_function_calling,
-            "supports_vision": model.supports_vision,
-            "supports_prompt_cache": model.supports_prompt_cache,
-            "supports_reasoning_effort": model.supports_reasoning_effort,
-            "created_at": model.created_at.isoformat() if model.created_at else "",
-            "updated_at": model.updated_at.isoformat() if model.updated_at else "",
-        }
+        return _model_to_response(model)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
+    except HTTPException:
+        raise
     except Exception:
-        logger.exception("Error creating verified model")
+        logger.exception('Error creating verified model')
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create verified model",
+            detail='Failed to create verified model',
         )
 
 
-@api_router.put("/{model_name}", response_model=VerifiedModelResponse)
+@api_router.put('/{model_name}', response_model=VerifiedModelResponse)
 async def update_verified_model(
     model_name: str,
     model_data: VerifiedModelUpdate,
-    user_id: str = Depends(get_user_id),
+    user_id: str = Depends(get_admin_user_id),
 ):
     """Update an existing verified model.
 
     Args:
         model_name: The model name to update
         model_data: The fields to update
-        user_id: Authenticated user ID (from dependency)
+        user_id: Authenticated admin user ID (from dependency)
 
     Returns:
         VerifiedModelResponse: The updated model
@@ -240,39 +276,29 @@ async def update_verified_model(
         if not model:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Model {model_name} not found",
+                detail=f'Model {model_name} not found',
             )
 
-        return {
-            "id": model.id,
-            "model_name": model.model_name,
-            "provider": model.provider,
-            "is_verified": model.is_verified,
-            "is_enabled": model.is_enabled,
-            "supports_function_calling": model.supports_function_calling,
-            "supports_vision": model.supports_vision,
-            "supports_prompt_cache": model.supports_prompt_cache,
-            "supports_reasoning_effort": model.supports_reasoning_effort,
-            "created_at": model.created_at.isoformat() if model.created_at else "",
-            "updated_at": model.updated_at.isoformat() if model.updated_at else "",
-        }
+        return _model_to_response(model)
     except HTTPException:
         raise
     except Exception:
-        logger.exception(f"Error updating verified model: {model_name}")
+        logger.exception(f'Error updating verified model: {model_name}')
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to update verified model",
+            detail='Failed to update verified model',
         )
 
 
-@api_router.delete("/{model_name}")
-async def delete_verified_model(model_name: str, user_id: str = Depends(get_user_id)):
+@api_router.delete('/{model_name}')
+async def delete_verified_model(
+    model_name: str, user_id: str = Depends(get_admin_user_id)
+):
     """Delete a verified model.
 
     Args:
         model_name: The model name to delete
-        user_id: Authenticated user ID (from dependency)
+        user_id: Authenticated admin user ID (from dependency)
 
     Returns:
         dict: Success message
@@ -282,44 +308,50 @@ async def delete_verified_model(model_name: str, user_id: str = Depends(get_user
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Model {model_name} not found",
+                detail=f'Model {model_name} not found',
             )
 
-        return {"message": f"Model {model_name} deleted successfully"}
+        return {'message': f'Model {model_name} deleted successfully'}
     except HTTPException:
         raise
     except Exception:
-        logger.exception(f"Error deleting verified model: {model_name}")
+        logger.exception(f'Error deleting verified model: {model_name}')
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to delete verified model",
+            detail='Failed to delete verified model',
         )
 
 
-@api_router.post("/bulk", response_model=BulkCreateResponse)
+@api_router.post('/bulk', response_model=BulkCreateResponse)
 async def bulk_create_verified_models(
-    request: BulkCreateRequest, user_id: str = Depends(get_user_id)
+    request: BulkCreateRequest, user_id: str = Depends(get_admin_user_id)
 ):
     """Bulk create multiple verified models.
 
     Args:
         request: The bulk create request with list of models
-        user_id: Authenticated user ID (from dependency)
+        user_id: Authenticated admin user ID (from dependency)
 
     Returns:
         BulkCreateResponse: Number of models created
     """
     try:
+        # Validate all models before creating
+        for model in request.models:
+            _validate_model_input(model.model_name, model.provider)
+
         models_data = [model.model_dump() for model in request.models]
         created_count = verified_model_store.bulk_create_models(models_data)
 
         return {
-            "created_count": created_count,
-            "message": f"Successfully created {created_count} models",
+            'created_count': created_count,
+            'message': f'Successfully created {created_count} models',
         }
+    except HTTPException:
+        raise
     except Exception:
-        logger.exception("Error bulk creating verified models")
+        logger.exception('Error bulk creating verified models')
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to bulk create verified models",
+            detail='Failed to bulk create verified models',
         )

@@ -90,127 +90,81 @@ def upgrade() -> None:
     # OpenHands provider models
     openhands_models = [
         {
-            "model_name": "claude-sonnet-4-20250514",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'claude-3-5-sonnet-20241022',
+            'provider': 'openhands',
+            'supports_function_calling': True,
         },
         {
-            "model_name": "claude-sonnet-4-5-20250929",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'claude-3-7-sonnet-20250219',
+            'provider': 'openhands',
+            'supports_function_calling': True,
         },
         {
-            "model_name": "claude-haiku-4-5-20251001",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'gpt-4o',
+            'provider': 'openhands',
+            'supports_function_calling': True,
         },
         {
-            "model_name": "claude-opus-4-20250514",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'gpt-4o-mini',
+            'provider': 'openhands',
+            'supports_function_calling': True,
         },
         {
-            "model_name": "claude-opus-4-1-20250805",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'gemini-2.0-flash-exp',
+            'provider': 'openhands',
+            'supports_function_calling': True,
         },
         {
-            "model_name": "claude-opus-4-5-20251101",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'o1',
+            'provider': 'openhands',
+            'supports_reasoning_effort': True,
         },
         {
-            "model_name": "gpt-5.2",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'o1-mini',
+            'provider': 'openhands',
+            'supports_reasoning_effort': True,
         },
         {
-            "model_name": "gpt-5.2-codex",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'o3-mini',
+            'provider': 'openhands',
+            'supports_reasoning_effort': True,
         },
         {
-            "model_name": "gemini-2.5-pro",
-            "provider": "openhands",
-            "supports_function_calling": True,
-            "supports_reasoning_effort": True,
+            'model_name': 'deepseek-chat',
+            'provider': 'openhands',
+            'supports_function_calling': True,
         },
         {
-            "model_name": "o3",
-            "provider": "openhands",
-            "supports_reasoning_effort": True,
-        },
-        {
-            "model_name": "o3-mini-2025-01-31",
-            "provider": "openhands",
-            "supports_reasoning_effort": True,
-        },
-        {
-            "model_name": "o3-2025-04-16",
-            "provider": "openhands",
-            "supports_reasoning_effort": True,
-        },
-        {
-            "model_name": "o4-mini",
-            "provider": "openhands",
-            "supports_reasoning_effort": True,
-        },
-        {
-            "model_name": "o4-mini-2025-04-16",
-            "provider": "openhands",
-            "supports_reasoning_effort": True,
-        },
-        {
-            "model_name": "devstral-small-2505",
-            "provider": "openhands",
-            "supports_function_calling": True,
-        },
-        {
-            "model_name": "devstral-small-2507",
-            "provider": "openhands",
-            "supports_function_calling": True,
-        },
-        {
-            "model_name": "devstral-medium-2507",
-            "provider": "openhands",
-            "supports_function_calling": True,
-        },
-        {
-            "model_name": "kimi-k2-0711-preview",
-            "provider": "openhands",
-            "supports_function_calling": True,
-        },
-        {
-            "model_name": "qwen3-coder-480b",
-            "provider": "openhands",
-            "supports_function_calling": True,
+            'model_name': 'deepseek-reasoner',
+            'provider': 'openhands',
+            'supports_reasoning_effort': True,
         },
     ]
 
     # Anthropic models
     anthropic_models = [
         {
-            "model_name": "claude-3-5-sonnet-20241022",
-            "provider": "anthropic",
-            "supports_function_calling": True,
-            "supports_vision": True,
-            "supports_prompt_cache": True,
+            'model_name': 'claude-3-5-sonnet-20241022',
+            'provider': 'anthropic',
+            'supports_function_calling': True,
+            'supports_vision': True,
+            'supports_prompt_cache': True,
         },
         {
-            "model_name": "claude-3-7-sonnet-20250219",
-            "provider": "anthropic",
-            "supports_function_calling": True,
-            "supports_vision": True,
-            "supports_prompt_cache": True,
+            'model_name': 'claude-3-7-sonnet-20250219',
+            'provider': 'anthropic',
+            'supports_function_calling': True,
+            'supports_vision': True,
+            'supports_prompt_cache': True,
         },
     ]
 
     # OpenAI models
     openai_models = [
         {
-            "model_name": "deepseek-chat",
-            "provider": "openai",
-            "supports_function_calling": True,
+            'model_name': 'deepseek-chat',
+            'provider': 'openai',
+            'supports_function_calling': True,
         },
     ]
 

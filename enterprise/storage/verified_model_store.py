@@ -240,26 +240,31 @@ class VerifiedModelStore:
         """
         with self.session_maker() as session:
             created_count = 0
-            for model_data in models:
-                # Check if model already exists
-                existing = (
-                    session.query(VerifiedModel)
-                    .filter(VerifiedModel.model_name == model_data["model_name"])
-                    .first()
-                )
-                if existing:
-                    logger.debug(
-                        f"Model {model_data['model_name']} already exists, skipping"
+            try:
+                for model_data in models:
+                    # Check if model already exists
+                    existing = (
+                        session.query(VerifiedModel)
+                        .filter(VerifiedModel.model_name == model_data['model_name'])
+                        .first()
                     )
-                    continue
+                    if existing:
+                        logger.debug(
+                            f"Model {model_data['model_name']} already exists, skipping"
+                        )
+                        continue
 
-                model = VerifiedModel(**model_data)
-                session.add(model)
-                created_count += 1
+                    model = VerifiedModel(**model_data)
+                    session.add(model)
+                    created_count += 1
 
-            session.commit()
-            logger.info(f"Bulk created {created_count} verified models")
-            return created_count
+                session.commit()
+                logger.info(f'Bulk created {created_count} verified models')
+                return created_count
+            except Exception as e:
+                session.rollback()
+                logger.error(f'Error during bulk create: {e}')
+                raise
 
     @classmethod
     def get_instance(cls) -> VerifiedModelStore:
