@@ -16,15 +16,16 @@ from openhands.server.dependencies import get_dependencies
 from openhands.server.shared import config, server_config
 from openhands.utils.llm import get_supported_llm_models
 
-app = APIRouter(prefix='/api/options', dependencies=get_dependencies())
+app = APIRouter(prefix="/api/options", dependencies=get_dependencies())
 
 
-@app.get('/models', response_model=list[str])
+@app.get("/models", response_model=list[str])
 async def get_litellm_models() -> list[str]:
     """Get all models supported by LiteLLM.
 
     This function combines models from litellm and Bedrock, removing any
-    error-prone Bedrock models.
+    error-prone Bedrock models. In SaaS mode, it uses database-backed
+    verified models for dynamic updates without code deployments.
 
     To get the models:
     ```sh
@@ -34,10 +35,27 @@ async def get_litellm_models() -> list[str]:
     Returns:
         list[str]: A sorted list of unique model names.
     """
-    return get_supported_llm_models(config)
+    verified_model_store = None
+
+    # Check if running in SaaS mode by checking for /saas endpoint
+    try:
+        # Try to import enterprise modules - only available in SaaS deployment
+        from storage.verified_model_store import VerifiedModelStore
+
+        verified_model_store = VerifiedModelStore.get_instance()
+    except ImportError:
+        # Not in SaaS mode, use hardcoded models
+        pass
+    except Exception as e:
+        # Log error but continue with hardcoded models
+        from openhands.core.logger import openhands_logger as logger
+
+        logger.warning(f"Error initializing verified model store: {e}")
+
+    return get_supported_llm_models(config, verified_model_store)
 
 
-@app.get('/agents', response_model=list[str])
+@app.get("/agents", response_model=list[str])
 async def get_agents() -> list[str]:
     """Get all agents supported by LiteLLM.
 
@@ -52,7 +70,7 @@ async def get_agents() -> list[str]:
     return sorted(Agent.list_agents())
 
 
-@app.get('/security-analyzers', response_model=list[str])
+@app.get("/security-analyzers", response_model=list[str])
 async def get_security_analyzers() -> list[str]:
     """Get all supported security analyzers.
 
@@ -67,7 +85,7 @@ async def get_security_analyzers() -> list[str]:
     return sorted(SecurityAnalyzers.keys())
 
 
-@app.get('/config', response_model=dict[str, Any], deprecated=True)
+@app.get("/config", response_model=dict[str, Any], deprecated=True)
 async def get_config() -> dict[str, Any]:
     """Get current config.
 

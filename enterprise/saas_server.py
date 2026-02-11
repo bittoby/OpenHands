@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Ensure SAAS configuration is used
-if not os.getenv('OPENHANDS_CONFIG_CLS'):
-    os.environ['OPENHANDS_CONFIG_CLS'] = 'server.config.SaaSServerConfig'
+if not os.getenv("OPENHANDS_CONFIG_CLS"):
+    os.environ["OPENHANDS_CONFIG_CLS"] = "server.config.SaaSServerConfig"
 
 import socketio  # noqa: E402
 from fastapi import Request, status  # noqa: E402
@@ -41,6 +41,7 @@ from server.routes.oauth_device import oauth_device_router  # noqa: E402
 from server.routes.orgs import org_router  # noqa: E402
 from server.routes.readiness import readiness_router  # noqa: E402
 from server.routes.user import saas_user_router  # noqa: E402
+from server.routes.verified_models import api_router as verified_models_router  # noqa: E402
 from server.sharing.shared_conversation_router import (  # noqa: E402
     router as shared_conversation_router,
 )
@@ -55,14 +56,14 @@ from openhands.server.middleware import (  # noqa: E402
 )
 from openhands.server.static import SPAStaticFiles  # noqa: E402
 
-directory = os.getenv('FRONTEND_DIRECTORY', './frontend/build')
+directory = os.getenv("FRONTEND_DIRECTORY", "./frontend/build")
 
 patch_mcp_server()
 
 
-@base_app.get('/saas')
+@base_app.get("/saas")
 def is_saas():
-    return {'saas': True}
+    return {"saas": True}
 
 
 base_app.include_router(readiness_router)  # Add routes for readiness checks
@@ -85,7 +86,7 @@ if GITHUB_APP_CLIENT_ID:
     from server.routes.integration.github import github_integration_router  # noqa: E402
 
     # Bludgeon mypy into not deleting my import
-    logger.debug(f'Loaded {GithubV1CallbackProcessor.__name__}')
+    logger.debug(f"Loaded {GithubV1CallbackProcessor.__name__}")
 
     base_app.include_router(
         github_integration_router
@@ -99,6 +100,9 @@ if GITLAB_APP_CLIENT_ID:
 
 base_app.include_router(api_keys_router)  # Add routes for API key management
 base_app.include_router(org_router)  # Add routes for organization management
+base_app.include_router(
+    verified_models_router
+)  # Add routes for verified models management
 add_github_proxy_routes(base_app)
 add_debugging_routes(
     base_app
@@ -121,13 +125,13 @@ base_app.add_middleware(
     CORSMiddleware,
     allow_origins=PERMITTED_CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 base_app.add_middleware(CacheControlMiddleware)
-base_app.middleware('http')(SetAuthCookieMiddleware())
+base_app.middleware("http")(SetAuthCookieMiddleware())
 
-base_app.mount('/', SPAStaticFiles(directory=directory, html=True), name='dist')
+base_app.mount("/", SPAStaticFiles(directory=directory, html=True), name="dist")
 
 
 setup_rate_limit_handler(base_app)
@@ -137,14 +141,14 @@ setup_rate_limit_handler(base_app)
 async def no_credentials_exception_handler(request: Request, exc: NoCredentialsError):
     logger.info(exc.__class__.__name__)
     return JSONResponse(
-        {'error': NoCredentialsError.__name__}, status.HTTP_401_UNAUTHORIZED
+        {"error": NoCredentialsError.__name__}, status.HTTP_401_UNAUTHORIZED
     )
 
 
 @base_app.exception_handler(ExpiredError)
 async def expired_exception_handler(request: Request, exc: ExpiredError):
     logger.info(exc.__class__.__name__)
-    return JSONResponse({'error': ExpiredError.__name__}, status.HTTP_401_UNAUTHORIZED)
+    return JSONResponse({"error": ExpiredError.__name__}, status.HTTP_401_UNAUTHORIZED)
 
 
 app = socketio.ASGIApp(sio, other_asgi_app=base_app)
