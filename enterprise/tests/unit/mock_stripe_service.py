@@ -1,4 +1,5 @@
-"""Mock implementation of the stripe_service module for testing.
+"""
+Mock implementation of the stripe_service module for testing.
 """
 
 from unittest.mock import AsyncMock, MagicMock

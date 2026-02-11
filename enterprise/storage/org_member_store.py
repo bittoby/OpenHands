@@ -1,4 +1,5 @@
-"""Store class for managing organization-member relationships.
+"""
+Store class for managing organization-member relationships.
 """
 
 from typing import Optional

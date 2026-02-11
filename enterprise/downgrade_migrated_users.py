@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""This script can be removed once orgs is established - probably after Feb 15 2026
+"""
+This script can be removed once orgs is established - probably after Feb 15 2026
 
 Downgrade script for migrated users.
 

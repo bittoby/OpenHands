@@ -1,4 +1,5 @@
-"""Unit tests for JiraManager.
+"""
+Unit tests for JiraManager.
 """
 
 from unittest.mock import AsyncMock, MagicMock, patch

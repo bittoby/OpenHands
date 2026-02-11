@@ -144,6 +144,7 @@ async def on_event(
     event_service: EventService = event_service_dependency,
 ) -> Success:
     """Webhook callback for when event stream events occur."""
+
     app_conversation_info = await valid_conversation(
         conversation_id, sandbox_info, app_conversation_info_service
     )
@@ -180,8 +181,7 @@ async def get_secret(
 ) -> Response:
     """Given an access token, retrieve a user secret. The access token
     is limited by user and provider type, and may include a timeout, limiting
-    the damage in the event that a token is ever leaked
-    """
+    the damage in the event that a token is ever leaked"""
     try:
         payload = jwt_service.verify_jws_token(access_token)
         user_id = payload['user_id']

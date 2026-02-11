@@ -1,4 +1,5 @@
-"""SQLAlchemy model for User.
+"""
+SQLAlchemy model for User.
 """
 
 from uuid import uuid4

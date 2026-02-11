@@ -22,7 +22,8 @@ from openhands.storage.data_models.conversation_metadata import ConversationMeta
 
 
 def validate_conversation_id(conversation_id: str) -> str:
-    """Validate conversation ID format and length.
+    """
+    Validate conversation ID format and length.
 
     Args:
         conversation_id: The conversation ID to validate

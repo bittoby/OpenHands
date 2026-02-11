@@ -39,6 +39,7 @@ def fetch_github_issue_context(
     Returns:
         A comprehensive string containing the issue/PR context
     """
+
     # Build context string
     context_parts = []
 

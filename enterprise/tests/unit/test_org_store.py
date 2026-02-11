@@ -204,7 +204,8 @@ def test_get_kwargs_from_settings():
 
 
 def test_persist_org_with_owner_success(session_maker, mock_litellm_api):
-    """GIVEN: Valid org and org_member entities
+    """
+    GIVEN: Valid org and org_member entities
     WHEN: persist_org_with_owner is called
     THEN: Both entities are persisted in a single transaction and org is returned
     """
@@ -259,7 +260,8 @@ def test_persist_org_with_owner_success(session_maker, mock_litellm_api):
 
 
 def test_persist_org_with_owner_returns_refreshed_org(session_maker, mock_litellm_api):
-    """GIVEN: Valid org and org_member entities
+    """
+    GIVEN: Valid org and org_member entities
     WHEN: persist_org_with_owner is called
     THEN: The returned org is refreshed from database with all fields populated
     """
@@ -303,7 +305,8 @@ def test_persist_org_with_owner_returns_refreshed_org(session_maker, mock_litell
 
 
 def test_persist_org_with_owner_transaction_atomicity(session_maker, mock_litellm_api):
-    """GIVEN: Valid org but invalid org_member (missing required field)
+    """
+    GIVEN: Valid org but invalid org_member (missing required field)
     WHEN: persist_org_with_owner is called
     THEN: Transaction fails and neither entity is persisted
     """
@@ -351,7 +354,8 @@ def test_persist_org_with_owner_transaction_atomicity(session_maker, mock_litell
 
 
 def test_persist_org_with_owner_with_multiple_fields(session_maker, mock_litellm_api):
-    """GIVEN: Org with multiple optional fields populated
+    """
+    GIVEN: Org with multiple optional fields populated
     WHEN: persist_org_with_owner is called
     THEN: All fields are persisted correctly
     """
@@ -415,7 +419,8 @@ def test_persist_org_with_owner_with_multiple_fields(session_maker, mock_litellm
 
 @pytest.mark.asyncio
 async def test_delete_org_cascade_success(session_maker, mock_litellm_api):
-    """GIVEN: Valid organization with associated data
+    """
+    GIVEN: Valid organization with associated data
     WHEN: delete_org_cascade is called
     THEN: Organization and all associated data are deleted and org object is returned
     """
@@ -454,7 +459,8 @@ async def test_delete_org_cascade_success(session_maker, mock_litellm_api):
 
 @pytest.mark.asyncio
 async def test_delete_org_cascade_not_found(session_maker):
-    """GIVEN: Organization ID that doesn't exist
+    """
+    GIVEN: Organization ID that doesn't exist
     WHEN: delete_org_cascade is called
     THEN: None is returned
     """
@@ -473,7 +479,8 @@ async def test_delete_org_cascade_not_found(session_maker):
 async def test_delete_org_cascade_litellm_failure_causes_rollback(
     session_maker, mock_litellm_api
 ):
-    """GIVEN: Organization exists but LiteLLM cleanup fails
+    """
+    GIVEN: Organization exists but LiteLLM cleanup fails
     WHEN: delete_org_cascade is called
     THEN: Transaction is rolled back and organization still exists
     """
@@ -534,7 +541,8 @@ async def test_delete_org_cascade_litellm_failure_causes_rollback(
 
 
 def test_get_user_orgs_paginated_first_page(session_maker, mock_litellm_api):
-    """GIVEN: User is member of multiple organizations
+    """
+    GIVEN: User is member of multiple organizations
     WHEN: get_user_orgs_paginated is called without page_id
     THEN: First page of organizations is returned in alphabetical order
     """
@@ -592,7 +600,8 @@ def test_get_user_orgs_paginated_first_page(session_maker, mock_litellm_api):
 
 
 def test_get_user_orgs_paginated_with_page_id(session_maker, mock_litellm_api):
-    """GIVEN: User has multiple organizations and page_id is provided
+    """
+    GIVEN: User has multiple organizations and page_id is provided
     WHEN: get_user_orgs_paginated is called with page_id
     THEN: Organizations starting from offset are returned
     """
@@ -636,7 +645,8 @@ def test_get_user_orgs_paginated_with_page_id(session_maker, mock_litellm_api):
 
 
 def test_get_user_orgs_paginated_no_more_results(session_maker, mock_litellm_api):
-    """GIVEN: User has organizations but fewer than limit
+    """
+    GIVEN: User has organizations but fewer than limit
     WHEN: get_user_orgs_paginated is called
     THEN: All organizations are returned and next_page_id is None
     """
@@ -675,7 +685,8 @@ def test_get_user_orgs_paginated_no_more_results(session_maker, mock_litellm_api
 
 
 def test_get_user_orgs_paginated_invalid_page_id(session_maker, mock_litellm_api):
-    """GIVEN: Invalid page_id (non-numeric string)
+    """
+    GIVEN: Invalid page_id (non-numeric string)
     WHEN: get_user_orgs_paginated is called
     THEN: Results start from beginning (offset 0)
     """
@@ -711,7 +722,8 @@ def test_get_user_orgs_paginated_invalid_page_id(session_maker, mock_litellm_api
 
 
 def test_get_user_orgs_paginated_empty_results(session_maker):
-    """GIVEN: User has no organizations
+    """
+    GIVEN: User has no organizations
     WHEN: get_user_orgs_paginated is called
     THEN: Empty list and None next_page_id are returned
     """
@@ -730,7 +742,8 @@ def test_get_user_orgs_paginated_empty_results(session_maker):
 
 
 def test_get_user_orgs_paginated_ordering(session_maker, mock_litellm_api):
-    """GIVEN: User has organizations with different names
+    """
+    GIVEN: User has organizations with different names
     WHEN: get_user_orgs_paginated is called
     THEN: Organizations are returned in alphabetical order by name
     """

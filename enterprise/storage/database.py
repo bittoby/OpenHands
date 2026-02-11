@@ -1,4 +1,5 @@
-"""Database connection module for enterprise storage.
+"""
+Database connection module for enterprise storage.
 
 This is for backwards compatibility with V0.
 

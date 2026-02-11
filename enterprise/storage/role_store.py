@@ -1,4 +1,5 @@
-"""Store class for managing roles.
+"""
+Store class for managing roles.
 """
 
 from typing import List, Optional

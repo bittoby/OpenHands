@@ -1,4 +1,5 @@
-"""SQLAlchemy model for Organization.
+"""
+SQLAlchemy model for Organization.
 """
 
 from uuid import uuid4

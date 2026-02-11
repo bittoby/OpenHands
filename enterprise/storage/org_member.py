@@ -1,4 +1,5 @@
-"""SQLAlchemy model for Organization-Member relationship.
+"""
+SQLAlchemy model for Organization-Member relationship.
 """
 
 from pydantic import SecretStr

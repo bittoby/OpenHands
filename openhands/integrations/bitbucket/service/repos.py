@@ -8,7 +8,8 @@ from openhands.server.types import AppMode
 
 
 class BitBucketReposMixin(BitBucketMixinBase):
-    """Mixin for BitBucket repository-related operations
+    """
+    Mixin for BitBucket repository-related operations
     """
 
     async def search_repositories(

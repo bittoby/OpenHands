@@ -114,6 +114,7 @@ class ProcessSandboxService(SandboxService):
         sandbox_spec: SandboxSpecInfo,
     ) -> subprocess.Popen:
         """Start the agent server process."""
+
         # Prepare environment variables
         env = os.environ.copy()
         env.update(sandbox_spec.initial_env)

@@ -4,7 +4,8 @@ from openhands.integrations.service_types import RequestMethod
 
 
 class BitBucketPRsMixin(BitBucketMixinBase):
-    """Mixin for BitBucket pull request operations
+    """
+    Mixin for BitBucket pull request operations
     """
 
     async def create_pr(

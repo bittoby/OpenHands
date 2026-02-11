@@ -1,4 +1,5 @@
-"""This test file verifies that the billing routes correctly use the stripe_service
+"""
+This test file verifies that the billing routes correctly use the stripe_service
 functions with the new database-first approach.
 """
 
@@ -70,6 +71,7 @@ async def test_create_customer_setup_session_uses_customer_id():
 @pytest.mark.asyncio
 async def test_create_checkout_session_uses_customer_id():
     """Test that create_checkout_session uses a customer ID string"""
+
     # Create a mock request
     mock_request = MagicMock()
     mock_request.state = {'user_id': 'test-user-id'}
@@ -155,6 +157,7 @@ async def test_create_checkout_session_uses_customer_id():
 @pytest.mark.asyncio
 async def test_has_payment_method_uses_customer_id():
     """Test that has_payment_method uses a customer ID string"""
+
     # Create a mock request
     mock_request = MagicMock()
     mock_request.state = {'user_id': 'test-user-id'}

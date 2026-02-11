@@ -35,6 +35,7 @@ class LinearNewConversationView(LinearViewInterface):
 
     def _get_instructions(self, jinja_env: Environment) -> tuple[str, str]:
         """Instructions passed when conversation is first initialized"""
+
         instructions_template = jinja_env.get_template('linear_instructions.j2')
         instructions = instructions_template.render()
 
@@ -51,6 +52,7 @@ class LinearNewConversationView(LinearViewInterface):
 
     async def create_or_update_conversation(self, jinja_env: Environment) -> str:
         """Create a new Linear conversation"""
+
         if not self.selected_repo:
             raise StartingConvoException('No repository selected for this conversation')
 
@@ -110,6 +112,7 @@ class LinearExistingConversationView(LinearViewInterface):
 
     def _get_instructions(self, jinja_env: Environment) -> tuple[str, str]:
         """Instructions passed when conversation is first initialized"""
+
         user_msg_template = jinja_env.get_template('linear_existing_conversation.j2')
         user_msg = user_msg_template.render(
             issue_key=self.job_context.issue_key,
@@ -122,6 +125,7 @@ class LinearExistingConversationView(LinearViewInterface):
 
     async def create_or_update_conversation(self, jinja_env: Environment) -> str:
         """Update an existing Linear conversation"""
+
         user_id = self.linear_user.keycloak_user_id
 
         try:
@@ -190,6 +194,7 @@ class LinearFactory:
         linear_workspace: LinearWorkspace,
     ) -> LinearViewInterface:
         """Create appropriate Linear view based on the message and user state"""
+
         if not linear_user or not saas_user_auth or not linear_workspace:
             raise StartingConvoException(
                 'User not authenticated with Linear integration'

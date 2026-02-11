@@ -126,7 +126,8 @@ redis_client = create_redis_client()
 
 
 async def verify_jira_signature(body: bytes, signature: str, payload: dict):
-    """Verify Jira webhook signature.
+    """
+    Verify Jira webhook signature.
 
     Args:
         body: Raw request body bytes
@@ -139,6 +140,7 @@ async def verify_jira_signature(body: bytes, signature: str, payload: dict):
     Returns:
         None (raises exception on failure)
     """
+
     if not signature:
         raise HTTPException(
             status_code=403, detail='x-hub-signature header is missing!'

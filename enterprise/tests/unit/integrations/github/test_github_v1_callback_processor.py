@@ -1,4 +1,5 @@
-"""Tests for the GithubV1CallbackProcessor.
+"""
+Tests for the GithubV1CallbackProcessor.
 
 Covers:
 - Event filtering

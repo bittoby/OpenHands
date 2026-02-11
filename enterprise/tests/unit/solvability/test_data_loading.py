@@ -1,4 +1,5 @@
-"""Unit tests for data loading functionality in solvability/data.
+"""
+Unit tests for data loading functionality in solvability/data.
 """
 
 import json
