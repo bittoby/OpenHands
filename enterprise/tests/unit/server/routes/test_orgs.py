@@ -1,5 +1,4 @@
-"""
-Integration tests for organization API routes.
+"""Integration tests for organization API routes.
 
 Tests the POST /api/organizations endpoint with various scenarios.
 """
@@ -88,8 +87,7 @@ def target_user_id():
 
 @pytest.mark.asyncio
 async def test_create_org_success(mock_app):
-    """
-    GIVEN: Valid organization creation request
+    """GIVEN: Valid organization creation request
     WHEN: POST /api/organizations is called
     THEN: Organization is created and returned with 201 status
     """
@@ -140,8 +138,7 @@ async def test_create_org_success(mock_app):
 
 @pytest.mark.asyncio
 async def test_create_org_invalid_email(mock_app):
-    """
-    GIVEN: Request with invalid email format
+    """GIVEN: Request with invalid email format
     WHEN: POST /api/organizations is called
     THEN: 422 validation error is returned
     """
@@ -163,8 +160,7 @@ async def test_create_org_invalid_email(mock_app):
 
 @pytest.mark.asyncio
 async def test_create_org_empty_name(mock_app):
-    """
-    GIVEN: Request with empty organization name
+    """GIVEN: Request with empty organization name
     WHEN: POST /api/organizations is called
     THEN: 422 validation error is returned
     """
@@ -186,8 +182,7 @@ async def test_create_org_empty_name(mock_app):
 
 @pytest.mark.asyncio
 async def test_create_org_duplicate_name(mock_app):
-    """
-    GIVEN: Organization name already exists
+    """GIVEN: Organization name already exists
     WHEN: POST /api/organizations is called
     THEN: 409 Conflict error is returned
     """
@@ -214,8 +209,7 @@ async def test_create_org_duplicate_name(mock_app):
 
 @pytest.mark.asyncio
 async def test_create_org_litellm_failure(mock_app):
-    """
-    GIVEN: LiteLLM integration fails
+    """GIVEN: LiteLLM integration fails
     WHEN: POST /api/organizations is called
     THEN: 500 Internal Server Error is returned
     """
@@ -242,8 +236,7 @@ async def test_create_org_litellm_failure(mock_app):
 
 @pytest.mark.asyncio
 async def test_create_org_database_failure(mock_app):
-    """
-    GIVEN: Database operation fails
+    """GIVEN: Database operation fails
     WHEN: POST /api/organizations is called
     THEN: 500 Internal Server Error is returned
     """
@@ -270,8 +263,7 @@ async def test_create_org_database_failure(mock_app):
 
 @pytest.mark.asyncio
 async def test_create_org_unexpected_error(mock_app):
-    """
-    GIVEN: Unexpected error occurs
+    """GIVEN: Unexpected error occurs
     WHEN: POST /api/organizations is called
     THEN: 500 Internal Server Error is returned with generic message
     """
@@ -298,8 +290,7 @@ async def test_create_org_unexpected_error(mock_app):
 
 @pytest.mark.asyncio
 async def test_create_org_unauthorized():
-    """
-    GIVEN: User is not authenticated
+    """GIVEN: User is not authenticated
     WHEN: POST /api/organizations is called
     THEN: 401 Unauthorized error is returned
     """
@@ -330,8 +321,7 @@ async def test_create_org_unauthorized():
 
 @pytest.mark.asyncio
 async def test_create_org_forbidden_non_openhands_email():
-    """
-    GIVEN: User email is not @openhands.dev
+    """GIVEN: User email is not @openhands.dev
     WHEN: POST /api/organizations is called
     THEN: 403 Forbidden error is returned
     """
@@ -365,8 +355,7 @@ async def test_create_org_forbidden_non_openhands_email():
 
 @pytest.mark.asyncio
 async def test_create_org_is_not_personal(mock_app):
-    """
-    GIVEN: Admin creates a new team organization
+    """GIVEN: Admin creates a new team organization
     WHEN: POST /api/organizations is called
     THEN: is_personal field is False (team orgs have different ID than creator)
     """
@@ -409,8 +398,7 @@ async def test_create_org_is_not_personal(mock_app):
 
 @pytest.mark.asyncio
 async def test_create_org_sensitive_fields_not_exposed(mock_app):
-    """
-    GIVEN: Organization is created successfully
+    """GIVEN: Organization is created successfully
     WHEN: Response is returned
     THEN: Sensitive fields (API keys) are not exposed
     """
@@ -489,8 +477,7 @@ def mock_app_list():
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_success(mock_app_list):
-    """
-    GIVEN: User has organizations
+    """GIVEN: User has organizations
     WHEN: GET /api/organizations is called
     THEN: Paginated list of organizations is returned with 200 status
     """
@@ -529,8 +516,7 @@ async def test_list_user_orgs_success(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_with_pagination(mock_app_list):
-    """
-    GIVEN: User has multiple organizations
+    """GIVEN: User has multiple organizations
     WHEN: GET /api/organizations is called with pagination params
     THEN: Paginated results are returned with next_page_id
     """
@@ -568,8 +554,7 @@ async def test_list_user_orgs_with_pagination(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_empty(mock_app_list):
-    """
-    GIVEN: User has no organizations
+    """GIVEN: User has no organizations
     WHEN: GET /api/organizations is called
     THEN: Empty list is returned with 200 status
     """
@@ -592,8 +577,7 @@ async def test_list_user_orgs_empty(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_invalid_limit_negative(mock_app_list):
-    """
-    GIVEN: Invalid limit parameter (negative)
+    """GIVEN: Invalid limit parameter (negative)
     WHEN: GET /api/organizations is called
     THEN: 422 validation error is returned
     """
@@ -609,8 +593,7 @@ async def test_list_user_orgs_invalid_limit_negative(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_invalid_limit_zero(mock_app_list):
-    """
-    GIVEN: Invalid limit parameter (zero or negative)
+    """GIVEN: Invalid limit parameter (zero or negative)
     WHEN: GET /api/organizations is called
     THEN: 422 validation error is returned
     """
@@ -626,8 +609,7 @@ async def test_list_user_orgs_invalid_limit_zero(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_service_error(mock_app_list):
-    """
-    GIVEN: Service layer raises an exception
+    """GIVEN: Service layer raises an exception
     WHEN: GET /api/organizations is called
     THEN: 500 Internal Server Error is returned
     """
@@ -648,8 +630,7 @@ async def test_list_user_orgs_service_error(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_unauthorized():
-    """
-    GIVEN: User is not authenticated
+    """GIVEN: User is not authenticated
     WHEN: GET /api/organizations is called
     THEN: 401 Unauthorized error is returned
     """
@@ -674,8 +655,7 @@ async def test_list_user_orgs_unauthorized():
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_personal_org_identified(mock_app_list):
-    """
-    GIVEN: User has a personal organization (org.id == user_id)
+    """GIVEN: User has a personal organization (org.id == user_id)
     WHEN: GET /api/organizations is called
     THEN: is_personal field is True for personal org
     """
@@ -708,8 +688,7 @@ async def test_list_user_orgs_personal_org_identified(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_team_org_identified(mock_app_list):
-    """
-    GIVEN: User has a team organization (org.id != user_id)
+    """GIVEN: User has a team organization (org.id != user_id)
     WHEN: GET /api/organizations is called
     THEN: is_personal field is False for team org
     """
@@ -739,8 +718,7 @@ async def test_list_user_orgs_team_org_identified(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_mixed_personal_and_team(mock_app_list):
-    """
-    GIVEN: User has both personal and team organizations
+    """GIVEN: User has both personal and team organizations
     WHEN: GET /api/organizations is called
     THEN: is_personal field correctly identifies each org type
     """
@@ -794,8 +772,7 @@ async def test_list_user_orgs_mixed_personal_and_team(mock_app_list):
 
 @pytest.mark.asyncio
 async def test_list_user_orgs_all_fields_present(mock_app_list):
-    """
-    GIVEN: Organization with all fields populated
+    """GIVEN: Organization with all fields populated
     WHEN: GET /api/organizations is called
     THEN: All organization fields are included in response
     """
@@ -880,8 +857,7 @@ def mock_app_with_get_user_id():
 
 @pytest.mark.asyncio
 async def test_get_org_success(mock_app_with_get_user_id):
-    """
-    GIVEN: Valid org_id and authenticated user who is a member
+    """GIVEN: Valid org_id and authenticated user who is a member
     WHEN: GET /api/organizations/{org_id} is called
     THEN: Organization details are returned with 200 status
     """
@@ -926,8 +902,7 @@ async def test_get_org_success(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_get_org_user_not_member(mock_app_with_get_user_id):
-    """
-    GIVEN: User is not a member of the organization
+    """GIVEN: User is not a member of the organization
     WHEN: GET /api/organizations/{org_id} is called
     THEN: 404 Not Found error is returned
     """
@@ -950,8 +925,7 @@ async def test_get_org_user_not_member(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_get_org_not_found(mock_app_with_get_user_id):
-    """
-    GIVEN: Organization does not exist
+    """GIVEN: Organization does not exist
     WHEN: GET /api/organizations/{org_id} is called
     THEN: 404 Not Found error is returned
     """
@@ -973,8 +947,7 @@ async def test_get_org_not_found(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_get_org_invalid_uuid(mock_app_with_get_user_id):
-    """
-    GIVEN: Invalid UUID format for org_id
+    """GIVEN: Invalid UUID format for org_id
     WHEN: GET /api/organizations/{org_id} is called
     THEN: 422 Unprocessable Entity error is returned
     """
@@ -992,8 +965,7 @@ async def test_get_org_invalid_uuid(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_get_org_unauthorized():
-    """
-    GIVEN: User is not authenticated
+    """GIVEN: User is not authenticated
     WHEN: GET /api/organizations/{org_id} is called
     THEN: 401 Unauthorized error is returned
     """
@@ -1019,8 +991,7 @@ async def test_get_org_unauthorized():
 
 @pytest.mark.asyncio
 async def test_get_org_unexpected_error(mock_app_with_get_user_id):
-    """
-    GIVEN: Unexpected error occurs during retrieval
+    """GIVEN: Unexpected error occurs during retrieval
     WHEN: GET /api/organizations/{org_id} is called
     THEN: 500 Internal Server Error is returned
     """
@@ -1043,8 +1014,7 @@ async def test_get_org_unexpected_error(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_get_org_personal_workspace():
-    """
-    GIVEN: User retrieves their personal organization (org.id == user_id)
+    """GIVEN: User retrieves their personal organization (org.id == user_id)
     WHEN: GET /api/organizations/{org_id} is called
     THEN: is_personal field is True
     """
@@ -1092,8 +1062,7 @@ async def test_get_org_personal_workspace():
 
 @pytest.mark.asyncio
 async def test_get_org_team_workspace(mock_app_with_get_user_id):
-    """
-    GIVEN: User retrieves a team organization (org.id != user_id)
+    """GIVEN: User retrieves a team organization (org.id != user_id)
     WHEN: GET /api/organizations/{org_id} is called
     THEN: is_personal field is False
     """
@@ -1130,8 +1099,7 @@ async def test_get_org_team_workspace(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_get_org_with_credits_none(mock_app_with_get_user_id):
-    """
-    GIVEN: Organization exists but credits retrieval returns None
+    """GIVEN: Organization exists but credits retrieval returns None
     WHEN: GET /api/organizations/{org_id} is called
     THEN: Organization is returned with credits as None
     """
@@ -1171,8 +1139,7 @@ async def test_get_org_with_credits_none(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_get_org_sensitive_fields_not_exposed(mock_app_with_get_user_id):
-    """
-    GIVEN: Organization is retrieved successfully
+    """GIVEN: Organization is retrieved successfully
     WHEN: Response is returned
     THEN: Sensitive fields (API keys) are not exposed
     """
@@ -1223,8 +1190,7 @@ async def test_get_org_sensitive_fields_not_exposed(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_delete_org_success(mock_app):
-    """
-    GIVEN: Valid organization deletion request by owner
+    """GIVEN: Valid organization deletion request by owner
     WHEN: DELETE /api/organizations/{org_id} is called
     THEN: Organization is deleted and 200 status with confirmation is returned
     """
@@ -1258,8 +1224,7 @@ async def test_delete_org_success(mock_app):
 
 @pytest.mark.asyncio
 async def test_delete_org_not_found(mock_app):
-    """
-    GIVEN: Organization does not exist
+    """GIVEN: Organization does not exist
     WHEN: DELETE /api/organizations/{org_id} is called
     THEN: 404 Not Found error is returned
     """
@@ -1282,8 +1247,7 @@ async def test_delete_org_not_found(mock_app):
 
 @pytest.mark.asyncio
 async def test_delete_org_not_owner(mock_app):
-    """
-    GIVEN: User is not the organization owner
+    """GIVEN: User is not the organization owner
     WHEN: DELETE /api/organizations/{org_id} is called
     THEN: 403 Forbidden error is returned
     """
@@ -1310,8 +1274,7 @@ async def test_delete_org_not_owner(mock_app):
 
 @pytest.mark.asyncio
 async def test_delete_org_not_member(mock_app):
-    """
-    GIVEN: User is not a member of the organization
+    """GIVEN: User is not a member of the organization
     WHEN: DELETE /api/organizations/{org_id} is called
     THEN: 403 Forbidden error is returned
     """
@@ -1338,8 +1301,7 @@ async def test_delete_org_not_member(mock_app):
 
 @pytest.mark.asyncio
 async def test_delete_org_database_failure(mock_app):
-    """
-    GIVEN: Database operation fails during deletion
+    """GIVEN: Database operation fails during deletion
     WHEN: DELETE /api/organizations/{org_id} is called
     THEN: 500 Internal Server Error is returned
     """
@@ -1362,8 +1324,7 @@ async def test_delete_org_database_failure(mock_app):
 
 @pytest.mark.asyncio
 async def test_delete_org_unexpected_error(mock_app):
-    """
-    GIVEN: Unexpected error occurs during deletion
+    """GIVEN: Unexpected error occurs during deletion
     WHEN: DELETE /api/organizations/{org_id} is called
     THEN: 500 Internal Server Error is returned with generic message
     """
@@ -1386,8 +1347,7 @@ async def test_delete_org_unexpected_error(mock_app):
 
 @pytest.mark.asyncio
 async def test_delete_org_invalid_uuid(mock_app):
-    """
-    GIVEN: Invalid UUID format in URL
+    """GIVEN: Invalid UUID format in URL
     WHEN: DELETE /api/organizations/{invalid_uuid} is called
     THEN: 422 validation error is returned
     """
@@ -1404,8 +1364,7 @@ async def test_delete_org_invalid_uuid(mock_app):
 
 @pytest.mark.asyncio
 async def test_delete_org_unauthorized():
-    """
-    GIVEN: User is not authenticated
+    """GIVEN: User is not authenticated
     WHEN: DELETE /api/organizations/{org_id} is called
     THEN: 401 Unauthorized error is returned
     """
@@ -1450,8 +1409,7 @@ def mock_update_app():
 
 @pytest.mark.asyncio
 async def test_update_org_personal_workspace_preserved():
-    """
-    GIVEN: User updates their personal organization
+    """GIVEN: User updates their personal organization
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: is_personal field remains True in response
     """
@@ -1504,8 +1462,7 @@ async def test_update_org_personal_workspace_preserved():
 
 @pytest.mark.asyncio
 async def test_update_org_team_workspace_preserved():
-    """
-    GIVEN: User updates a team organization
+    """GIVEN: User updates a team organization
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: is_personal field remains False in response
     """
@@ -1558,8 +1515,7 @@ async def test_update_org_team_workspace_preserved():
 
 @pytest.mark.asyncio
 async def test_update_org_not_found(mock_update_app):
-    """
-    GIVEN: Organization ID does not exist
+    """GIVEN: Organization ID does not exist
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: 404 Not Found error is returned
     """
@@ -1586,8 +1542,7 @@ async def test_update_org_not_found(mock_update_app):
 
 @pytest.mark.asyncio
 async def test_update_org_permission_denied_non_member(mock_update_app):
-    """
-    GIVEN: User is not a member of the organization
+    """GIVEN: User is not a member of the organization
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: 403 Forbidden error is returned
     """
@@ -1618,8 +1573,7 @@ async def test_update_org_permission_denied_non_member(mock_update_app):
 
 @pytest.mark.asyncio
 async def test_update_org_permission_denied_llm_settings(mock_update_app):
-    """
-    GIVEN: User lacks admin/owner role but tries to update LLM settings
+    """GIVEN: User lacks admin/owner role but tries to update LLM settings
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: 403 Forbidden error is returned
     """
@@ -1653,8 +1607,7 @@ async def test_update_org_permission_denied_llm_settings(mock_update_app):
 
 @pytest.mark.asyncio
 async def test_update_org_database_error(mock_update_app):
-    """
-    GIVEN: Database operation fails during update
+    """GIVEN: Database operation fails during update
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: 500 Internal Server Error is returned
     """
@@ -1681,8 +1634,7 @@ async def test_update_org_database_error(mock_update_app):
 
 @pytest.mark.asyncio
 async def test_update_org_unexpected_error(mock_update_app):
-    """
-    GIVEN: Unexpected error occurs during update
+    """GIVEN: Unexpected error occurs during update
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: 500 Internal Server Error is returned with generic message
     """
@@ -1709,8 +1661,7 @@ async def test_update_org_unexpected_error(mock_update_app):
 
 @pytest.mark.asyncio
 async def test_update_org_invalid_uuid_format(mock_update_app):
-    """
-    GIVEN: Invalid UUID format in org_id path parameter
+    """GIVEN: Invalid UUID format in org_id path parameter
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: 422 validation error is returned (handled by FastAPI)
     """
@@ -1732,8 +1683,7 @@ async def test_update_org_invalid_uuid_format(mock_update_app):
 
 @pytest.mark.asyncio
 async def test_update_org_invalid_field_values(mock_update_app):
-    """
-    GIVEN: Update request with invalid field values (e.g., negative max_iterations)
+    """GIVEN: Update request with invalid field values (e.g., negative max_iterations)
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: 422 validation error is returned
     """
@@ -1753,8 +1703,7 @@ async def test_update_org_invalid_field_values(mock_update_app):
 
 @pytest.mark.asyncio
 async def test_update_org_invalid_email_format(mock_update_app):
-    """
-    GIVEN: Update request with invalid email format
+    """GIVEN: Update request with invalid email format
     WHEN: PATCH /api/organizations/{org_id} is called
     THEN: 422 validation error is returned
     """
@@ -2834,8 +2783,7 @@ class TestGetMeEndpoint:
 
 @pytest.mark.asyncio
 async def test_switch_org_success(mock_app_with_get_user_id):
-    """
-    GIVEN: Valid org_id and authenticated user who is a member
+    """GIVEN: Valid org_id and authenticated user who is a member
     WHEN: POST /api/organizations/{org_id}/switch is called
     THEN: User's current org is switched and org details returned with 200 status
     """
@@ -2875,8 +2823,7 @@ async def test_switch_org_success(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_switch_org_not_member(mock_app_with_get_user_id):
-    """
-    GIVEN: User is not a member of the target organization
+    """GIVEN: User is not a member of the target organization
     WHEN: POST /api/organizations/{org_id}/switch is called
     THEN: 403 Forbidden error is returned
     """
@@ -2903,8 +2850,7 @@ async def test_switch_org_not_member(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_switch_org_not_found(mock_app_with_get_user_id):
-    """
-    GIVEN: Organization does not exist
+    """GIVEN: Organization does not exist
     WHEN: POST /api/organizations/{org_id}/switch is called
     THEN: 404 Not Found error is returned
     """
@@ -2926,8 +2872,7 @@ async def test_switch_org_not_found(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_switch_org_invalid_uuid(mock_app_with_get_user_id):
-    """
-    GIVEN: Invalid UUID format for org_id
+    """GIVEN: Invalid UUID format for org_id
     WHEN: POST /api/organizations/{org_id}/switch is called
     THEN: 422 Unprocessable Entity error is returned
     """
@@ -2943,8 +2888,7 @@ async def test_switch_org_invalid_uuid(mock_app_with_get_user_id):
 
 @pytest.mark.asyncio
 async def test_switch_org_database_error(mock_app_with_get_user_id):
-    """
-    GIVEN: Database operation fails during switch
+    """GIVEN: Database operation fails during switch
     WHEN: POST /api/organizations/{org_id}/switch is called
     THEN: 500 Internal Server Error is returned
     """

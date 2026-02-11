@@ -525,8 +525,7 @@ async def test_backfill_contact_name_preserves_custom_value(session_maker):
 
 
 def test_update_current_org_success(session_maker):
-    """
-    GIVEN: User exists in database
+    """GIVEN: User exists in database
     WHEN: update_current_org is called with new org_id
     THEN: User's current_org_id is updated and user is returned
     """
@@ -550,8 +549,7 @@ def test_update_current_org_success(session_maker):
 
 
 def test_update_current_org_user_not_found(session_maker):
-    """
-    GIVEN: User does not exist in database
+    """GIVEN: User does not exist in database
     WHEN: update_current_org is called
     THEN: None is returned
     """

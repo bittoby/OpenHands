@@ -136,7 +136,6 @@ async def test_create_checkout_session_stripe_error(
     session_maker, mock_checkout_request
 ):
     """Test handling of Stripe API errors."""
-
     mock_customer = stripe.Customer(
         id='mock-customer', metadata={'user_id': 'mock-user'}
     )
@@ -173,7 +172,6 @@ async def test_create_checkout_session_stripe_error(
 @pytest.mark.asyncio
 async def test_create_checkout_session_success(session_maker, mock_checkout_request):
     """Test successful creation of checkout session."""
-
     mock_session = MagicMock()
     mock_session.url = 'https://checkout.stripe.com/test-session'
     mock_session.id = 'test_session_id'
@@ -448,7 +446,6 @@ async def test_cancel_callback_success():
 @pytest.mark.asyncio
 async def test_has_payment_method_with_payment_method():
     """Test has_payment_method returns True when user has a payment method."""
-
     mock_has_payment_method = AsyncMock(return_value=True)
     with patch(
         'server.routes.billing.stripe_service.has_payment_method_by_user_id',

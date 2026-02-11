@@ -1,5 +1,4 @@
-"""
-This test file verifies that the stripe_service functions properly use the database
+"""This test file verifies that the stripe_service functions properly use the database
 to store and retrieve customer IDs.
 """
 
@@ -75,7 +74,6 @@ async def test_find_customer_id_by_user_id_checks_db_first(
     session_maker, test_org_and_user
 ):
     """Test that find_customer_id_by_user_id checks the database first"""
-
     test_user_id, test_org_id = test_org_and_user
 
     # Set up the mock for the database query result
@@ -117,7 +115,6 @@ async def test_find_customer_id_by_user_id_falls_back_to_stripe(
     session_maker, test_org_and_user
 ):
     """Test that find_customer_id_by_user_id falls back to Stripe if not found in the database"""
-
     test_user_id, test_org_id = test_org_and_user
 
     # Set up the mock for stripe.Customer.search_async
@@ -153,7 +150,6 @@ async def test_find_customer_id_by_user_id_falls_back_to_stripe(
 @pytest.mark.asyncio
 async def test_create_customer_stores_id_in_db(session_maker, test_org_and_user):
     """Test that create_customer stores the customer ID in the database"""
-
     test_user_id, test_org_id = test_org_and_user
 
     # Set up the mock for stripe.Customer.search_async and create_async
