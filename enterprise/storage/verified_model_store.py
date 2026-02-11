@@ -144,7 +144,7 @@ class VerifiedModelStore:
                 .first()
             )
             if existing:
-                raise ValueError(f"Model {model_name} already exists")
+                raise ValueError(f'Model {model_name} already exists')
 
             model = VerifiedModel(
                 model_name=model_name,
@@ -159,7 +159,7 @@ class VerifiedModelStore:
             session.add(model)
             session.commit()
             session.refresh(model)
-            logger.info(f"Created verified model: {model_name}")
+            logger.info(f'Created verified model: {model_name}')
             return model
 
     def update_model(
@@ -210,7 +210,7 @@ class VerifiedModelStore:
 
             session.commit()
             session.refresh(model)
-            logger.info(f"Updated verified model: {model_name}")
+            logger.info(f'Updated verified model: {model_name}')
             return model
 
     def delete_model(self, model_name: str) -> bool:
@@ -233,7 +233,7 @@ class VerifiedModelStore:
 
             session.delete(model)
             session.commit()
-            logger.info(f"Deleted verified model: {model_name}")
+            logger.info(f'Deleted verified model: {model_name}')
             return True
 
     def bulk_create_models(self, models: list[dict]) -> int:
@@ -256,12 +256,12 @@ class VerifiedModelStore:
                     # Check if model already exists
                     existing = (
                         session.query(VerifiedModel)
-                        .filter(VerifiedModel.model_name == model_data["model_name"])
+                        .filter(VerifiedModel.model_name == model_data['model_name'])
                         .first()
                     )
                     if existing:
                         logger.debug(
-                            f"Model {model_data['model_name']} already exists, skipping"
+                            f'Model {model_data["model_name"]} already exists, skipping'
                         )
                         continue
 
@@ -270,11 +270,11 @@ class VerifiedModelStore:
                     created_count += 1
 
                 session.commit()
-                logger.info(f"Bulk created {created_count} verified models")
+                logger.info(f'Bulk created {created_count} verified models')
                 return created_count
             except Exception as e:
                 session.rollback()
-                logger.error(f"Error during bulk create: {e}")
+                logger.error(f'Error during bulk create: {e}')
                 raise
 
     @classmethod

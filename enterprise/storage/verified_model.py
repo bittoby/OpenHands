@@ -35,31 +35,31 @@ class VerifiedModel(Base):
         updated_at: Timestamp when the model was last updated
     """
 
-    __tablename__ = "verified_models"
+    __tablename__ = 'verified_models'
     __table_args__ = (
-        UniqueConstraint("model_name", "provider", name="uq_model_provider"),
+        UniqueConstraint('model_name', 'provider', name='uq_model_provider'),
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     model_name = Column(String(255), nullable=False, index=True)
     provider = Column(String(100), nullable=False, index=True)
     is_verified = Column(
-        Boolean, nullable=False, default=True, server_default=text("true")
+        Boolean, nullable=False, default=True, server_default=text('true')
     )
     is_enabled = Column(
-        Boolean, nullable=False, default=True, server_default=text("true")
+        Boolean, nullable=False, default=True, server_default=text('true')
     )
     supports_function_calling = Column(
-        Boolean, nullable=False, default=False, server_default=text("false")
+        Boolean, nullable=False, default=False, server_default=text('false')
     )
     supports_vision = Column(
-        Boolean, nullable=False, default=False, server_default=text("false")
+        Boolean, nullable=False, default=False, server_default=text('false')
     )
     supports_prompt_cache = Column(
-        Boolean, nullable=False, default=False, server_default=text("false")
+        Boolean, nullable=False, default=False, server_default=text('false')
     )
     supports_reasoning_effort = Column(
-        Boolean, nullable=False, default=False, server_default=text("false")
+        Boolean, nullable=False, default=False, server_default=text('false')
     )
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(
