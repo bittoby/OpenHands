@@ -40,7 +40,7 @@ async def get_litellm_models() -> list[str]:
     # Check if running in SaaS mode by checking for /saas endpoint
     try:
         # Try to import enterprise modules - only available in SaaS deployment
-        from storage.verified_model_store import VerifiedModelStore
+        from enterprise.storage.verified_model_store import VerifiedModelStore
 
         verified_model_store = VerifiedModelStore.get_instance()
     except ImportError:

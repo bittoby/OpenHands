@@ -1,0 +1,184 @@
+check-sync
+
+1s
+Run peter-evans/create-or-update-comment@v5
+  with:
+    issue-number: 12833
+    edit-mode: replace
+    body: ⚠️ This PR contains **migrations**. Please synchronize before merging to prevent conflicts.
+
+    token: ***
+    repository: OpenHands/OpenHands
+    append-separator: newline
+    reactions-edit-mode: append
+/home/runner/work/_actions/peter-evans/create-or-update-comment/v5/dist/index.js:7474
+      const error = new import_request_error.RequestError(toErrorMessage(data), status, {
+                    ^
+
+RequestError [HttpError]: Resource not accessible by integration - https://docs.github.com/rest/issues/comments#create-an-issue-comment
+    at /home/runner/work/_actions/peter-evans/create-or-update-comment/v5/dist/index.js:7474:21
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  status: 403,
+  response: {
+    url: 'https://api.github.com/repos/OpenHands/OpenHands/issues/12833/comments',
+    status: 403,
+    headers: {
+      'access-control-allow-origin': '*',
+      'access-control-expose-headers': 'ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset',
+      'content-encoding': 'gzip',
+      'content-security-policy': "default-src 'none'",
+      'content-type': 'application/json; charset=utf-8',
+      date: 'Fri, 13 Feb 2026 03:00:09 GMT',
+      'referrer-policy': 'origin-when-cross-origin, strict-origin-when-cross-origin',
+      server: 'github.com',
+      'strict-transport-security': 'max-age=31536000; includeSubdomains; preload',
+      'transfer-encoding': 'chunked',
+      vary: 'Accept-Encoding, Accept, X-Requested-With',
+      'x-accepted-github-permissions': 'issues=write; pull_requests=write',
+      'x-content-type-options': 'nosniff',
+      'x-frame-options': 'deny',
+      'x-github-api-version-selected': '2022-11-28',
+      'x-github-media-type': 'github.v3; format=json',
+      'x-github-request-id': '8411:18640D:1144755:4A25453:698E93B8',
+      'x-ratelimit-limit': '5000',
+      'x-ratelimit-remaining': '4959',
+      'x-ratelimit-reset': '1770952467',
+      'x-ratelimit-resource': 'core',
+      'x-ratelimit-used': '41',
+      'x-xss-protection': '0'
+    },
+    data: {
+      message: 'Resource not accessible by integration',
+      documentation_url: 'https://docs.github.com/rest/issues/comments#create-an-issue-comment',
+      status: '403'
+    }
+  },
+  request: {
+    method: 'POST',
+    url: 'https://api.github.com/repos/OpenHands/OpenHands/issues/12833/comments',
+    headers: {
+      accept: 'application/vnd.github.v3+json',
+      'user-agent': 'octokit-core.js/5.2.0 Node.js/24',
+      authorization: 'token [REDACTED]',
+      'content-type': 'application/json; charset=utf-8'
+    },
+    body: '{"body":"⚠️ This PR contains **migrations**. Please synchronize before merging to prevent conflicts."}',
+    request: {
+      agent: Agent {
+        _events: [Object: null prototype] {
+          free: [Function (anonymous)],
+          newListener: [Function: maybeEnableKeylog]
+        },
+        _eventsCount: 2,
+        _maxListeners: undefined,
+        options: [Object: null prototype] {
+          keepAlive: false,
+          maxSockets: 100,
+          defaultPort: 443,
+          protocol: 'https:',
+          noDelay: true,
+          path: null
+        },
+        defaultPort: 443,
+        protocol: 'https:',
+        requests: [Object: null prototype] {},
+        sockets: [Object: null prototype] {},
+        freeSockets: [Object: null prototype] {},
+        keepAliveMsecs: 1000,
+        keepAlive: false,
+        maxSockets: 100,
+        maxFreeSockets: 256,
+        scheduling: 'lifo',
+        maxTotalSockets: Infinity,
+        totalSocketCount: 0,
+        agentKeepAliveTimeoutBuffer: 1000,
+        maxCachedSessions: 100,
+        _sessionCache: { map: {}, list: [] },
+        Symbol(shapeMode): false,
+        Symbol(kCapture): false
+      },
+      fetch: [Function: proxyFetch],
+      hook: [Function: bound bound register]
+    }
+  }
+}
+
+Node.js v24.12.0
+
+
+============================================
+
+
+Lint enterprise python
+
+23s
+Run pre-commit run --all-files --show-diff-on-failure --config ./dev_config/python/.pre-commit-config.yaml
+  pre-commit run --all-files --show-diff-on-failure --config ./dev_config/python/.pre-commit-config.yaml
+  shell: /usr/bin/bash -e {0}
+  env:
+    GITHUB_REPO_NAME: OpenHands/OpenHands
+    pythonLocation: /opt/hostedtoolcache/Python/3.12.12/x64
+    PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.12/x64/lib/pkgconfig
+    Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.12/x64
+    Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.12/x64
+    Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.12/x64
+    LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.12/x64/lib
+[INFO] Initializing environment for https://github.com/pre-commit/pre-commit-hooks.
+Warning:  repo `https://github.com/pre-commit/pre-commit-hooks` uses deprecated stage names (commit, push) which will be removed in a future version.  Hint: often `pre-commit autoupdate --repo https://github.com/pre-commit/pre-commit-hooks` will fix this.  if it does not -- consider reporting an issue to that repo.
+[INFO] Initializing environment for https://github.com/abravalheri/validate-pyproject.
+[INFO] Initializing environment for https://github.com/abravalheri/validate-pyproject:.[all].
+[INFO] Initializing environment for https://github.com/astral-sh/ruff-pre-commit.
+[INFO] Initializing environment for https://github.com/pre-commit/mirrors-mypy.
+[INFO] Initializing environment for https://github.com/pre-commit/mirrors-mypy:types-requests,types-setuptools,types-pyyaml,types-toml,types-redis,lxml,./,stripe==11.5.0,pygithub==2.6.1.
+[INFO] Installing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+[INFO] Installing environment for https://github.com/abravalheri/validate-pyproject.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+[INFO] Installing environment for https://github.com/astral-sh/ruff-pre-commit.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+[INFO] Installing environment for https://github.com/pre-commit/mirrors-mypy.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+trim trailing whitespace.................................................Passed
+fix end of files.........................................................Passed
+check yaml...............................................................Passed
+debug statements (python)................................................Passed
+Validate pyproject.toml..................................................Passed
+ruff.....................................................................Failed
+- hook id: ruff
+- files were modified by this hook
+
+Found 2 errors (2 fixed, 0 remaining).
+
+ruff-format..............................................................Passed
+mypy.....................................................................Passed
+pre-commit hook(s) made changes.
+If you are seeing this message in CI, reproduce locally with: `pre-commit run --all-files`.
+To run `pre-commit` as part of git workflow, use `pre-commit install`.
+All changes made by hooks:
+diff --git a/enterprise/storage/verified_model_store.py b/enterprise/storage/verified_model_store.py
+index 16d460392..0ea1883d2 100644
+--- a/enterprise/storage/verified_model_store.py
++++ b/enterprise/storage/verified_model_store.py
+@@ -4,7 +4,7 @@ from __future__ import annotations
+
+ from dataclasses import dataclass
+
+-from sqlalchemy import and_, or_
++from sqlalchemy import and_
+ from sqlalchemy.orm import sessionmaker
+ from storage.database import session_maker
+ from storage.verified_model import VerifiedModel
+diff --git a/enterprise/tests/unit/storage/test_verified_model_store.py b/enterprise/tests/unit/storage/test_verified_model_store.py
+index 03603dc51..4fd6de6a6 100644
+--- a/enterprise/tests/unit/storage/test_verified_model_store.py
++++ b/enterprise/tests/unit/storage/test_verified_model_store.py
+@@ -4,7 +4,6 @@ import pytest
+ from sqlalchemy import create_engine
+ from sqlalchemy.orm import sessionmaker
+ from storage.base import Base
+-from storage.verified_model import VerifiedModel
+ from storage.verified_model_store import VerifiedModelStore
