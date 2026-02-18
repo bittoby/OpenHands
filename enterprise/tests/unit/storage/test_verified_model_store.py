@@ -4,7 +4,6 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from storage.base import Base
-from storage.verified_model import VerifiedModel
 from storage.verified_model_store import VerifiedModelStore
 
 

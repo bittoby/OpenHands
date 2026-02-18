@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker
 from storage.database import session_maker
 from storage.verified_model import VerifiedModel
