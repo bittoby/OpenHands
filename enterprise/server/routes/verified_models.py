@@ -98,9 +98,7 @@ async def create_verified_model(
         )
 
 
-@api_router.put(
-    '/{provider}/{model_name:path}', response_model=VerifiedModelResponse
-)
+@api_router.put('/{provider}/{model_name:path}', response_model=VerifiedModelResponse)
 async def update_verified_model(
     provider: str,
     model_name: str,

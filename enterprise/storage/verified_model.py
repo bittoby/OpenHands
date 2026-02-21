@@ -1,6 +1,16 @@
 """SQLAlchemy model for verified LLM models."""
 
-from sqlalchemy import Boolean, Column, DateTime, Identity, Integer, String, UniqueConstraint, func, text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Identity,
+    Integer,
+    String,
+    UniqueConstraint,
+    func,
+    text,
+)
 from storage.base import Base
 
 
@@ -23,9 +33,7 @@ class VerifiedModel(Base):  # type: ignore
     is_enabled = Column(
         Boolean, nullable=False, default=True, server_default=text('true')
     )
-    created_at = Column(
-        DateTime, nullable=False, server_default=func.now()
-    )
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
         DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
     )

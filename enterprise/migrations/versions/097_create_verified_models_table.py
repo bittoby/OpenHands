@@ -43,7 +43,9 @@ def upgrade() -> None:
             nullable=False,
             server_default=sa.text('CURRENT_TIMESTAMP'),
         ),
-        sa.UniqueConstraint('model_name', 'provider', name='uq_verified_model_provider'),
+        sa.UniqueConstraint(
+            'model_name', 'provider', name='uq_verified_model_provider'
+        ),
     )
 
     op.create_index(

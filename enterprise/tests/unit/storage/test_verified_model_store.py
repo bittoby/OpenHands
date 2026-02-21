@@ -52,7 +52,9 @@ class TestCreateModel:
 
     def test_same_name_different_provider_allowed(self, _mock_session_maker):
         VerifiedModelStore.create_model(model_name='claude', provider='openhands')
-        model = VerifiedModelStore.create_model(model_name='claude', provider='anthropic')
+        model = VerifiedModelStore.create_model(
+            model_name='claude', provider='anthropic'
+        )
         assert model.provider == 'anthropic'
 
 
@@ -95,9 +97,12 @@ class TestUpdateModel:
         assert updated.is_enabled is False
 
     def test_update_not_found(self, _seed_models):
-        assert VerifiedModelStore.update_model(
-            model_name='nonexistent', provider='openhands', is_enabled=False
-        ) is None
+        assert (
+            VerifiedModelStore.update_model(
+                model_name='nonexistent', provider='openhands', is_enabled=False
+            )
+            is None
+        )
 
     def test_update_no_change(self, _seed_models):
         updated = VerifiedModelStore.update_model(

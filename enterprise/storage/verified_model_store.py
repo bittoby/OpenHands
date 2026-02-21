@@ -80,7 +80,9 @@ class VerifiedModelStore:
             )
 
     @staticmethod
-    def create_model(model_name: str, provider: str, is_enabled: bool = True) -> VerifiedModel:
+    def create_model(
+        model_name: str, provider: str, is_enabled: bool = True
+    ) -> VerifiedModel:
         """Create a new verified model.
 
         Args:
@@ -103,9 +105,7 @@ class VerifiedModelStore:
                 .first()
             )
             if existing:
-                raise ValueError(
-                    f'Model {provider}/{model_name} already exists'
-                )
+                raise ValueError(f'Model {provider}/{model_name} already exists')
 
             model = VerifiedModel(
                 model_name=model_name,
