@@ -35,26 +35,29 @@ async def get_litellm_models() -> list[str]:
     Returns:
         list[str]: A sorted list of unique model names.
     """
-    verified_model_store = None
+    verified_models = _load_verified_models_from_db()
+    return get_supported_llm_models(config, verified_models)
 
-    # Check if running in SaaS mode by checking for /saas endpoint
+
+def _load_verified_models_from_db() -> list[str] | None:
+    """Try to load verified models from the database (SaaS mode only).
+
+    Returns:
+        List of model strings like 'provider/model_name' if available, None otherwise.
+    """
     try:
-        # Try to import enterprise modules - only available in SaaS deployment
         from storage.verified_model_store import VerifiedModelStore
-
-        verified_model_store = VerifiedModelStore.get_instance()
     except ImportError:
-        # Expected in self-hosted mode - enterprise modules not available
-        pass
+        return None
+
+    try:
+        db_models = VerifiedModelStore.get_enabled_models()
+        return [f'{m.provider}/{m.model_name}' for m in db_models]
     except Exception:
-        # Unexpected error - log full traceback for debugging
         from openhands.core.logger import openhands_logger as logger
 
-        logger.exception(
-            'Failed to initialize verified model store - falling back to hardcoded models'
-        )
-
-    return get_supported_llm_models(config, verified_model_store)
+        logger.exception('Failed to load verified models from database')
+        return None
 
 
 @app.get('/agents', response_model=list[str])

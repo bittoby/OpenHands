@@ -11,11 +11,37 @@ from openhands.core.config import LLMConfig, OpenHandsConfig
 from openhands.core.logger import openhands_logger as logger
 from openhands.llm import bedrock
 
-# Try to import VerifiedModelStore - only available in enterprise/SaaS deployments
-try:
-    from enterprise.storage.verified_model_store import VerifiedModelStore
-except ImportError:
-    VerifiedModelStore = None  # type: ignore
+# Hardcoded OpenHands provider models used in self-hosted mode.
+# In SaaS mode these are loaded from the database instead.
+OPENHANDS_MODELS = [
+    'openhands/claude-opus-4-5-20251101',
+    'openhands/claude-sonnet-4-5-20250929',
+    'openhands/gpt-5.2-codex',
+    'openhands/gpt-5.2',
+    'openhands/minimax-m2.5',
+    'openhands/gemini-3-pro-preview',
+    'openhands/gemini-3-flash-preview',
+    'openhands/deepseek-chat',
+    'openhands/devstral-medium-2512',
+    'openhands/kimi-k2-0711-preview',
+    'openhands/qwen3-coder-480b',
+]
+
+CLARIFAI_MODELS = [
+    'clarifai/openai.chat-completion.gpt-oss-120b',
+    'clarifai/openai.chat-completion.gpt-oss-20b',
+    'clarifai/openai.chat-completion.gpt-5',
+    'clarifai/openai.chat-completion.gpt-5-mini',
+    'clarifai/qwen.qwen3.qwen3-next-80B-A3B-Thinking',
+    'clarifai/qwen.qwenLM.Qwen3-30B-A3B-Instruct-2507',
+    'clarifai/qwen.qwenLM.Qwen3-30B-A3B-Thinking-2507',
+    'clarifai/qwen.qwenLM.Qwen3-14B',
+    'clarifai/qwen.qwenCoder.Qwen3-Coder-30B-A3B-Instruct',
+    'clarifai/deepseek-ai.deepseek-chat.DeepSeek-R1-0528-Qwen3-8B',
+    'clarifai/deepseek-ai.deepseek-chat.DeepSeek-V3_1',
+    'clarifai/zai.completion.GLM_4_5',
+    'clarifai/moonshotai.kimi.Kimi-K2-Instruct',
+]
 
 
 def is_openhands_model(model: str | None) -> bool:
@@ -74,17 +100,18 @@ def get_provider_api_base(model: str) -> str | None:
 
 
 def get_supported_llm_models(
-    config: OpenHandsConfig, verified_model_store=None
+    config: OpenHandsConfig,
+    verified_models: list[str] | None = None,
 ) -> list[str]:
     """Get all models supported by LiteLLM.
 
     This function combines models from litellm and Bedrock, removing any
-    error-prone Bedrock models. If a verified_model_store is provided (SaaS mode),
-    it will use the database-backed verified models instead of hardcoded arrays.
+    error-prone Bedrock models.
 
     Args:
-        config: The OpenHands configuration
-        verified_model_store: Optional store for database-backed verified models (SaaS only)
+        config: The OpenHands configuration.
+        verified_models: Optional list of verified model strings from the database
+            (SaaS mode). When provided, these replace the hardcoded OPENHANDS_MODELS.
 
     Returns:
         list[str]: A sorted list of unique model names.
@@ -122,71 +149,8 @@ def get_supported_llm_models(
             except httpx.HTTPError as e:
                 logger.error(f'Error getting OLLAMA models: {e}')
 
-    # If verified_model_store is provided (SaaS mode), use database-backed models
-    if verified_model_store:
-        try:
-            db_models = verified_model_store.get_enabled_models()
-            if db_models:
-                # Use provider field from database to construct proper model identifiers
-                db_model_names = []
-                for model in db_models:
-                    # Use the provider field to construct the full model name
-                    if model.provider:
-                        db_model_names.append(f'{model.provider}/{model.model_name}')
-                    else:
-                        # Fallback to openhands if no provider specified
-                        db_model_names.append(f'openhands/{model.model_name}')
-                logger.debug(
-                    f'Using {len(db_model_names)} verified models from database'
-                )
-                model_list = db_model_names + model_list
-        except Exception as e:
-            logger.warning(
-                f'Error fetching verified models from database, falling back to hardcoded: {e}'
-            )
-
-    # Fallback to hardcoded OpenHands provider models (self-hosted or DB error)
-    openhands_models = [
-        'openhands/claude-opus-4-5-20251101',
-        'openhands/claude-sonnet-4-5-20250929',
-        'openhands/gpt-5.2-codex',
-        'openhands/gpt-5.2',
-        'openhands/minimax-m2.5',
-        'openhands/gemini-3-pro-preview',
-        'openhands/gemini-3-flash-preview',
-        'openhands/deepseek-chat',
-        'openhands/devstral-medium-2512',
-        'openhands/kimi-k2-0711-preview',
-        'openhands/qwen3-coder-480b',
-    ]
-    model_list = openhands_models + model_list
-
-    # Add Clarifai provider models (via OpenAI-compatible endpoint)
-    # These models are available in both SaaS and self-hosted modes
-    model_list = _get_clarifai_models() + model_list
+    # Use database-backed models if provided (SaaS), otherwise use hardcoded list
+    openhands_models = verified_models if verified_models else OPENHANDS_MODELS
+    model_list = openhands_models + CLARIFAI_MODELS + model_list
 
     return sorted(set(model_list))
-
-
-def _get_clarifai_models() -> list[str]:
-    """Get list of Clarifai featured models.
-
-    Returns:
-        list[str]: List of Clarifai model identifiers
-    """
-    return [
-        # clarifai featured models
-        'clarifai/openai.chat-completion.gpt-oss-120b',
-        'clarifai/openai.chat-completion.gpt-oss-20b',
-        'clarifai/openai.chat-completion.gpt-5',
-        'clarifai/openai.chat-completion.gpt-5-mini',
-        'clarifai/qwen.qwen3.qwen3-next-80B-A3B-Thinking',
-        'clarifai/qwen.qwenLM.Qwen3-30B-A3B-Instruct-2507',
-        'clarifai/qwen.qwenLM.Qwen3-30B-A3B-Thinking-2507',
-        'clarifai/qwen.qwenLM.Qwen3-14B',
-        'clarifai/qwen.qwenCoder.Qwen3-Coder-30B-A3B-Instruct',
-        'clarifai/deepseek-ai.deepseek-chat.DeepSeek-R1-0528-Qwen3-8B',
-        'clarifai/deepseek-ai.deepseek-chat.DeepSeek-V3_1',
-        'clarifai/zai.completion.GLM_4_5',
-        'clarifai/moonshotai.kimi.Kimi-K2-Instruct',
-    ]
